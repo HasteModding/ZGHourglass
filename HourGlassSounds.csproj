@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+
+		<!-- Specifies that your project targets .NET Standard 2.1,
+		which is a specification for cross-platform compatibility across .NET runtimes (like .NET Core, Mono, Xamarin).-->
+		<TargetFramework>netstandard2.1</TargetFramework>
+
+		<!-- Automatically includes common using directives so you don’t have to manually write them at the top of each file. -->
+		<ImplicitUsings>enable</ImplicitUsings>
+
+		<!-- Turns on nullable reference types, a C# feature that helps prevent NullReferenceException at compile time. -->
+		<Nullable>enable</Nullable>
+
+		<!-- Tells the compiler to use the latest available C# language version supported by your compiler/SDK. -->
+		<LangVersion>latest</LangVersion>
+
+		<!-- My dir for Haste -->
+		<HasteDir Condition=" '$(HasteDir)' == '' ">C:\Program Files (x86)\Steam\steamapps\common\Haste</HasteDir>
+
+		<!-- This disables the automatic inclusion of framework reference assemblies
+		(like those from .NET Framework or Microsoft.NETCore.App) that the SDK would normally include for you. -->
+		<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+
+		<!-- Prevents the SDK from generating the [assembly: ...]
+		attributes automatically (like version, company, product info). -->
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+		<!-- Disables generation of a .deps.json file, which normally contains info about dependencies
+		(used for runtime binding and resolving). -->
+		<GenerateDependencyFile>false</GenerateDependencyFile>
+
+		<!-- Tells the compiler not to generate any debugging information (i.e., no .pdb files). -->
+		<DebugType>none</DebugType>
+
+	</PropertyGroup>
+
+	<ItemGroup>
+
+		<!-- Adds all the managed dlls cause lazy -->
+		<Reference Include="$(HasteDir)\Haste_Data\Managed\*.dll" Private="false" Publicize="true" />
+
+		<!-- Adds the harmonyX dll from workshop folder -->
+		<Reference Include="$(HasteDir)\..\..\workshop\content\1796470\3408901301\0Harmony.dll" Private="false" />
+
+		<EmbeddedResource Include="Assets\hourglassgravity" />
+
+	</ItemGroup>
+
+	<!-- Just builds directly into the 0Harmony path for quicker testing -->
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+
+		<!-- idk why vs wants to fuck the text but it looks like this normally;
+		xcopy "$(TargetDir)$(TargetFileName)" "C:\Program Files (x86)\Steam\steamapps\workshop\content\1796470\3408901301" /Y -->
+		<Exec Command="xcopy &quot;$(TargetDir)$(TargetFileName)&quot; &quot;$(HasteDir)\..\..\workshop\content\1796470\3408901301\&quot; /Y&#xD;&#xA;" />
+
+	</Target>
+
+</Project>
