@@ -3,6 +3,7 @@ using UnityEngine;
 using HasteEffects;
 using System.Reflection;
 using System.Collections;
+using pworld.Scripts.Extensions;
 
 namespace HourGlassSounds;
 
@@ -60,10 +61,6 @@ public class Patches
 {
 	public static event Action OnSlowmoUpdate;
 
-	/// <summary>
-	/// Patches the "OnStringChanged" method to update the localized text based on the mod's GUID.
-	/// </summary>
-	/// <param name="__instance">The instance of LocalizeUIText being patched.</param>
 	[HarmonyLib.HarmonyPatch(typeof(Zorro.Localization.LocalizeUIText), "OnStringChanged")]
 	[HarmonyLib.HarmonyPostfix]
 	private static void OnStringChangedPostfix(Zorro.Localization.LocalizeUIText __instance)
@@ -82,13 +79,12 @@ public class Patches
 	private static void Postfix(Ability_Slomo __instance)
 	{
 		Main.bellObject = __instance.gameObject;
-		Main.bellObject.AddComponent<BellHandler>();
+
+		// We either add the component or skip it.
+		// Easier if we just use the GetOrAddComponent method
+		Main.bellObject.GetOrAddComponent<BellHandler>();
 	}
 
-	/// <summary>
-	/// Patches the "RegisterPage" method to create a new Config page.
-	/// </summary>
-	/// <param name="__instance">The instance of HasteSettingsHandler being patched.</param>
 	[HarmonyLib.HarmonyPatch(typeof(HasteSettingsHandler), "RegisterPage")]
 	[HarmonyLib.HarmonyPrefix]
 	private static void RegisterPagePrefix(HasteSettingsHandler __instance) => new Config();
@@ -114,6 +110,8 @@ public class BellHandler : MonoBehaviour
 
 		MainEffect.volume = 0;
 	}
+
+	private void OnDestroy() => Patches.OnSlowmoUpdate -= OnUpdate;
 
 	private void OnUpdate()
 	{
@@ -153,7 +151,10 @@ public class BellHandler : MonoBehaviour
 		Swoosh = gameObject.AddComponent<AudioSource>();
 
 		Music = GameObject.Find("PersistentObjects/Handlers/Music").GetComponent<AudioSource>();
-		MusicFilter = Music.gameObject.AddComponent<AudioLowPassFilter>();
+
+		// Same problem here, we kept adding the component expecting it to just vanish
+		// So we either add or just skip it using the GetOrAddComponent method.
+		MusicFilter = Music.gameObject.GetOrAddComponent<AudioLowPassFilter>();
 
 		MusicFilter.cutoffFrequency = 5000;
 	}
