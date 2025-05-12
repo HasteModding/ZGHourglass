@@ -45,6 +45,11 @@
 
 		<EmbeddedResource Include="Assets\hourglassgravity" />
 
+		<!-- Puts my SettingsLib project into this one without the need of modifying the code directly in this project -->
+		<Compile Include="..\SettingsLib\*.cs">
+			<Link>SettingsLib\%(Filename)%(Extension)</Link>
+		</Compile>
+
 	</ItemGroup>
 
 	<!-- Just builds directly into the 0Harmony path for quicker testing -->

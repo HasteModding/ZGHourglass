@@ -7,5 +7,9 @@ IGNOREDSOUL - Literally wrote the entire mod</br>
 
 # Updates
 
+### v1.1.0
+- Updated to new internal SettingsLib.
+- Added new config option for different sound.
+
 ### v1.0.0
 - Sounds...
